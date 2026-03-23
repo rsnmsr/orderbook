@@ -8,6 +8,8 @@
 import random
 import uuid
 import time
+import json
+import pprint
 
 def clamp(n, min, max):
     if n < min:
@@ -35,14 +37,87 @@ def create_mkt_price_generator():
         initial_price = price
         yield price
 
-def buy_sell_price(price_gen):
+def buy_sell_price(price_gen, min_spread=0.01):
         mid = next(price_gen)
-        spread = random.uniform(0.02,0.1)
-        buy_price = round(mid - spread ,2)
-        sell_price = round(mid + spread,2)
+        spread = max(random.uniform(0.02, 0.1), min_spread)
+        buy_price = round(mid - spread/2, 2)
+        sell_price = round(mid + spread/2, 2)
+        # defensive correction
+        if buy_price >= sell_price:
+            sell_price = round(buy_price + min_spread, 2)
         return buy_price, sell_price
 
-def create_test():
+
+def validate_order_event(ev):
+    """Validate generated order event invariants.
+
+    Raises ValueError on invalid events.
+    """
+    if not isinstance(ev, dict):
+        raise ValueError("event must be a dict")
+    et = ev.get('event_type')
+    if et == 'ADD':
+        # direction
+        if ev.get('direction') not in ('BUY', 'SELL'):
+            raise ValueError(f"Invalid direction: {ev.get('direction')}")
+        # quantity
+        qty = ev.get('quantity')
+        if not isinstance(qty, int) or qty <= 0:
+            raise ValueError(f"Invalid quantity: {qty}")
+        # price (if present)
+        if 'price' in ev:
+            price = ev.get('price')
+            if not (isinstance(price, (int, float)) and price > 0):
+                raise ValueError(f"Invalid price: {price}")
+    elif et == 'CANCEL':
+        if not ev.get('target_orderid'):
+            raise ValueError("CANCEL missing target_orderid")
+    else:
+        raise ValueError(f"Unknown event_type: {et}")
+
+def generate_limit_price(price_generator, order_type):
+        """Generate an order event dict. """
+        buy_price, sell_price = buy_sell_price(price_generator)
+        orderid = uuid.uuid4()
+        timestamp = time.time_ns()
+        direction =  random.choice(['BUY', 'SELL'])
+        quantity = random.randint(1, 10)
+        ticker = 'ABC'
+
+        # For market orders we don't include price; event_type for adds is 'ADD'
+        if order_type == 'MARKET':
+            return {
+                'orderid': str(orderid),
+                'timestamp': timestamp,
+                'event_type': 'ADD',
+                'direction': direction,
+                'quantity': quantity,
+                'order_type': order_type,
+                'ticker': ticker,
+            }
+
+        aggressive = random.random() < 0.3   # 30%
+        if aggressive:
+            delta = random.uniform(0.01, 0.05)
+            if direction == 'BUY':
+                price = round(sell_price + delta, 2)   # cross ask
+            else:
+                price = round(buy_price - delta, 2)    # cross bid
+        else:
+            price = buy_price if direction == 'BUY' else sell_price
+
+        return {
+            'orderid': str(orderid),
+            'timestamp': timestamp,
+            'event_type': 'ADD',
+            'direction': direction,
+            'price': price,
+            'quantity': quantity,
+            'order_type': order_type,
+            'ticker': ticker,
+        }
+
+def create_test(no_of_test):
     '''
     These test cases will write 1000 mkt order + limit order
     The limit order will help to reach the intial step of price discovery
@@ -50,20 +125,66 @@ def create_test():
     '''
     price_generator = create_mkt_price_generator()
 
-    # create 200 limit order
+    # collect generated events and active orders so cancellations can reference real orders
+    events = []
+    active_orders = []
 
-    for i in range(20):
-        buy_price, sell_price = buy_sell_price(price_generator)
-        orderid = uuid.uuid4()
-        timestamp = int(time.time() * 10000)
-        event_type = random.choice(['ADD']) # we are adding only to fill the orderbook
-        direction =  random.choice(['BUY', 'SELL'])
-        price = buy_price if direction=='BUY' else sell_price
-        quantity = random.randint(1, 10)
+    # seed with some LIMIT orders
+    initial_book_making_test = no_of_test//2
+    for i in range(initial_book_making_test):
         order_type = 'LIMIT'
-        ticker = 'ABC'
-        print(orderid, timestamp, event_type, direction, price, quantity, order_type, ticker)
+        ev = generate_limit_price(price_generator, order_type)
+        validate_order_event(ev)
+        events.append(ev)
+        # only non-market adds stay active
+        if ev.get('event_type') == 'ADD' and ev.get('order_type') != 'MARKET':
+            active_orders.append(ev['orderid'])
+    
+    final_book_making_test = no_of_test-initial_book_making_test
+    for i in range(final_book_making_test):
+        order_type = random.choices(['LIMIT', 'MARKET', 'CANCEL'], weights=[70, 20, 10])[0]
+        if order_type == 'LIMIT':
+            ev = generate_limit_price(price_generator, order_type)
+            validate_order_event(ev)
+            events.append(ev)
+            active_orders.append(ev['orderid'])
+        elif order_type == 'MARKET':
+            # Market orders are going to be executed immediately, so it is not kept in active state
+            ev = generate_limit_price(price_generator, order_type)
+            validate_order_event(ev)
+            events.append(ev)
+        else:
+            # CANCEL: pick a random active order to cancel (if any)
+            if active_orders:
+                target = random.choice(active_orders)
+                timestamp = time.time_ns()
+                cancel_ev = {
+                    'event_type': 'CANCEL',
+                    'timestamp': timestamp,
+                    'target_orderid': target,
+                }
+                events.append(cancel_ev)
+                # remove from active list to avoid double-cancelling
+                try:
+                    active_orders.remove(target)
+                except ValueError:
+                    pass
+            else:
+                # no active orders to cancel; generate a new limit instead
+                ev = generate_limit_price(price_generator, 'LIMIT')
+                events.append(ev)
+                active_orders.append(ev['orderid'])
+    #pprint.pprint(events)
+
+    # persist generated events so tests can consume them
+    out_path = 'test_generation/generated_events.json'
+    with open(out_path, 'w') as f:
+        json.dump(events, f, indent=2)
+    print(f"Wrote {len(events)} events to {out_path}")
+
+
 
 
 if __name__ == "__main__":
-    create_test()
+    no_of_test = 1000
+    create_test(no_of_test)
