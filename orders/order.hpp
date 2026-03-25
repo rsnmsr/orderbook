@@ -18,7 +18,7 @@ class Order{
               int quantity, 
               const std::string& ticker, 
               Side side
-            );
+            )noexcept;
 
         // We have various getters to obtain the order state 
         const std::string& getOrderId();
