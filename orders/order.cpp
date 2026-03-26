@@ -12,3 +12,23 @@ Order::Order(const std::string &order_id_,
       side(side_)
 {
 }
+
+const std::string& Order::getOrderId() const{
+  return order_id;
+}
+
+int Order::getQuantity() const{
+  return quantity;
+}
+
+const std::string& Order::getTicker() const{
+  return ticker;
+}
+
+Side Order::getSide() const{
+  return side;
+}
+
+const std::chrono::system_clock::time_point& Order::getTimestamp() const{
+  return timestamp;
+}

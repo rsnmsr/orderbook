@@ -21,14 +21,14 @@ class Order{
             )noexcept;
 
         // We have various getters to obtain the order state 
-        const std::string& getOrderId();
-        int getQuantity();
-        const std::string& getTicker();
-        Side getSide();
-        const std::chrono::system_clock::time_point& getTimestamp();
+        const std::string& getOrderId() const;
+        int getQuantity() const;
+        const std::string& getTicker() const;
+        Side getSide() const;
+        const std::chrono::system_clock::time_point& getTimestamp() const;
 
         virtual ~Order() = default;
-        virtual void execute() = 0;
+        virtual void execute() const = 0;
 
 };
 
