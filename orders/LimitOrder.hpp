@@ -5,17 +5,17 @@
 
 class LimitOrder : public Order{
     private:
-    int price;
+    double price;
     public:
     LimitOrder(const std::string &order_id_,
                          const std::chrono::system_clock::time_point &timestamp_,
                          int quantity_,
                          const std::string &ticker_,
                          Side side_,
-                        int price
+                        double price
                     ) noexcept;
 
-    int getPrice();
+    double getPrice() const;
     void execute() const override;
     };
 

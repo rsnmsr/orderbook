@@ -9,7 +9,9 @@ Order::Order(const std::string &order_id_,
       timestamp(timestamp_),
       quantity(quantity_),
       ticker(ticker_),
-      side(side_)
+      side(side_),
+      remaining_quantity(quantity)
+      
 {
 }
 
@@ -19,6 +21,21 @@ const std::string& Order::getOrderId() const{
 
 int Order::getQuantity() const{
   return quantity;
+}
+
+int Order::getRemainingQuantity() const{
+  return remaining_quantity;
+}
+
+bool Order::isFilled() const {
+    return remaining_quantity == 0;
+}
+
+void Order::fill(int fill_quantity){
+    if(fill_quantity > remaining_quantity){
+        throw std::runtime_error("Overfill");
+    }
+    remaining_quantity -= fill_quantity;
 }
 
 const std::string& Order::getTicker() const{

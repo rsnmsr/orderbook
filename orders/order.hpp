@@ -9,6 +9,7 @@ class Order{
         std::string order_id;
         std::chrono::system_clock::time_point timestamp;
         int quantity;
+        int remaining_quantity;
         std::string ticker;
         Side side;
 
@@ -23,6 +24,9 @@ class Order{
         // We have various getters to obtain the order state 
         const std::string& getOrderId() const;
         int getQuantity() const;
+        int getRemainingQuantity() const;
+        void fill(int quantity);
+        bool isFilled() const;
         const std::string& getTicker() const;
         Side getSide() const;
         const std::chrono::system_clock::time_point& getTimestamp() const;
