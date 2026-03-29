@@ -33,9 +33,10 @@ struct OrderLocation {
 
 class OrderBook{
     private:
-    std::map <int, OrderQueue, std::greater<int>> bids;
-    std::map <int, OrderQueue> asks;
+    std::map <double, OrderQueue, std::greater<double>> bids;
+    std::map <double, OrderQueue> asks;
     std::unordered_map<std::string, OrderLocation> order_map;
+    void addToBook(std::unique_ptr<Order> order);  
     void MatchBuyOrder(Order& order, std::vector<TradingEvent>& trades);
     void MatchSellOrder(Order& order, std::vector<TradingEvent>& trades);
     public:
