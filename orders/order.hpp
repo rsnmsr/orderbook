@@ -33,6 +33,8 @@ class Order{
 
         virtual ~Order() = default;
         virtual void execute() const = 0;
+        virtual bool isMarket() const = 0;
+        virtual double getPrice() const = 0;
 
 };
 

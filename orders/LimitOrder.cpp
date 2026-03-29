@@ -19,6 +19,10 @@ LimitOrder::LimitOrder(const std::string &order_id_,
         return price;
     }
 
+    bool LimitOrder::isMarket() const{
+    return false;
+}
+
     void LimitOrder::execute() const {
     // Do some manupulation on the order book to execute this order
     // Buy 100 APPL, and use these order attribute on a runbook

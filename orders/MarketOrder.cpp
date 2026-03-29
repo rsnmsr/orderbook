@@ -14,6 +14,15 @@ MarketOrder::MarketOrder(const std::string &order_id_,
 {
 }
 
+bool MarketOrder::isMarket() const{
+    return true;
+}
+
+
+double MarketOrder::getPrice() const{
+    return 0;
+}
+
 void MarketOrder::execute() const {
     // Do some manupulation on the order book to execute this order
     // Buy 100 APPL, and use these order attribute on a runbook

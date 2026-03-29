@@ -15,8 +15,9 @@ class LimitOrder : public Order{
                         double price
                     ) noexcept;
 
-    double getPrice() const;
+    double getPrice() const override;
     void execute() const override;
+    bool isMarket() const override;
     };
 
 

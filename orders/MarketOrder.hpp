@@ -13,6 +13,8 @@ class MarketOrder : public Order{
             )noexcept;
             
             void execute() const override;
+            bool isMarket() const override;
+            double getPrice() const override;
 
 };
 
