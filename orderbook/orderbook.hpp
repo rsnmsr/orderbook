@@ -31,6 +31,12 @@ struct OrderLocation {
     OrderIt queue_iterator;
 };
 
+struct Event {
+    EventType type;
+    std::unique_ptr<Order> order;  
+    std::string order_id;          
+};
+
 class OrderBook{
     private:
     std::map <double, OrderQueue, std::greater<double>> bids;
@@ -43,7 +49,8 @@ class OrderBook{
     OrderBook();
     
     void cancelOrder(const std::string& order_id);
-    std::vector<TradingEvent> processOrder(std::unique_ptr<Order> order);
+//    std::vector<TradingEvent> processOrder(std::unique_ptr<Order> order);
+    std::vector<TradingEvent> processEvent(Event event);
 
 };
 #endif
