@@ -49,7 +49,6 @@ class OrderBook{
     OrderBook();
     
     void cancelOrder(const std::string& order_id);
-//    std::vector<TradingEvent> processOrder(std::unique_ptr<Order> order);
     std::vector<TradingEvent> processEvent(Event event);
 
 };

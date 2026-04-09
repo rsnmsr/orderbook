@@ -5,11 +5,11 @@ MarketOrder::MarketOrder(const std::string &order_id_,
                          const std::chrono::system_clock::time_point &timestamp_,
                          int quantity_,
                          const std::string &ticker_,
-                         Side side_) : Order(order_id_,
-                                             timestamp_,
-                                             quantity_,
-                                             ticker_,
-                                             side_)
+                         Side side_) noexcept : Order(order_id_,
+                                                      timestamp_,
+                                                      quantity_,
+                                                      ticker_,
+                                                      side_)
 
 {
 }

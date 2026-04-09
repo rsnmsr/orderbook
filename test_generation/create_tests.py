@@ -70,8 +70,8 @@ def validate_order_event(ev):
             if not (isinstance(price, (int, float)) and price > 0):
                 raise ValueError(f"Invalid price: {price}")
     elif et == 'CANCEL':
-        if not ev.get('target_orderid'):
-            raise ValueError("CANCEL missing target_orderid")
+        if not ev.get('orderid'):
+            raise ValueError("CANCEL missing orderid")
     else:
         raise ValueError(f"Unknown event_type: {et}")
 
@@ -161,7 +161,7 @@ def create_test(no_of_test):
                 cancel_ev = {
                     'event_type': 'CANCEL',
                     'timestamp': timestamp,
-                    'target_orderid': target,
+                    'orderid': target,
                 }
                 events.append(cancel_ev)
                 # remove from active list to avoid double-cancelling

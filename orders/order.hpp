@@ -2,7 +2,7 @@
 #define ORDER_HPP
 #include<string>
 #include<chrono>
-#include<enums.hpp>
+#include "../common/enums.hpp"
 
 class Order{
     protected:

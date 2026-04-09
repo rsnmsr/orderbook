@@ -1,0 +1,39 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build OrderBook (g++)",
+            "type": "shell",
+            "command": "C:\\msys64\\ucrt64\\bin\\g++.exe",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "${workspaceFolder}/driver/main.cpp",
+                "${workspaceFolder}/parsers/eventsParser.cpp",
+                "${workspaceFolder}/orderbook/orderbook.cpp",
+                "${workspaceFolder}/orders/order.cpp",
+                "${workspaceFolder}/orders/LimitOrder.cpp",
+                "${workspaceFolder}/orders/MarketOrder.cpp",
+                "-I${workspaceFolder}",
+                "-o",
+                "${workspaceFolder}/driver/main.exe"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "echo": true,
+                "reveal": "always",
+                "focus": false,
+                "panel": "shared"
+            }
+        }
+    ]
+}

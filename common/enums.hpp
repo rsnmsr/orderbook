@@ -1,3 +1,5 @@
+#ifndef ORDERBOOK_COMMON_ENUMS_HPP
+#define ORDERBOOK_COMMON_ENUMS_HPP
 
 enum Side {
     BUY = 1,
@@ -13,3 +15,5 @@ enum OrderType{
     LIMIT = 1,
     MARKET = 2
 };
+
+#endif

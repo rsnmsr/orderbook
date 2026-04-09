@@ -1,4 +1,5 @@
 #include "order.hpp"
+#include <stdexcept>
 
 Order::Order(const std::string &order_id_,
              const std::chrono::system_clock::time_point &timestamp_,
