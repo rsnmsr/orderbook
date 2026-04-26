@@ -11,6 +11,7 @@
                 "${workspaceFolder}/driver/main.cpp",
                 "${workspaceFolder}/parsers/eventsParser.cpp",
                 "${workspaceFolder}/orderbook/orderbook.cpp",
+                "${workspaceFolder}/debug/validator.cpp",
                 "${workspaceFolder}/orders/order.cpp",
                 "${workspaceFolder}/orders/LimitOrder.cpp",
                 "${workspaceFolder}/orders/MarketOrder.cpp",

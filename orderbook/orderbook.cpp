@@ -163,3 +163,27 @@ void OrderBook::cancelOrder(const std::string &order_id)
     }
     order_map.erase(order_id);
 }
+
+void OrderBook::printSnapshot() const {
+    std::cout << "\n===== BOOK SNAPSHOT =====\n";
+
+    std::cout << "ASKS:\n";
+    for (const auto& [price, queue] : asks) {
+        std::cout << price << " -> ";
+        for (const auto& order : queue) {
+            std::cout << order->getRemainingQuantity() << " ";
+        }
+        std::cout << '\n';
+    }
+
+    std::cout << "BIDS:\n";
+    for (const auto& [price, queue] : bids) {
+        std::cout << price << " -> ";
+        for (const auto& order : queue) {
+            std::cout << order->getRemainingQuantity() << " ";
+        }
+        std::cout << '\n';
+    }
+
+    std::cout << "=========================\n";
+}

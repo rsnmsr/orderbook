@@ -11,6 +11,14 @@ enum EventType {
     CANCEL = 2
 };
 
+inline const char* eventTypeToString(EventType t) {
+    switch (t) {
+        case ADD: return "ADD";
+        case CANCEL: return "CANCEL";
+        default: return "UNKNOWN";
+    }
+}
+
 enum OrderType{
     LIMIT = 1,
     MARKET = 2

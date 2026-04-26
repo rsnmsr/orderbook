@@ -28,7 +28,7 @@ inline void shutdownLog() {
 inline void writeLine(const std::string &level, const std::string &msg) {
     std::lock_guard<std::mutex> lk(logMutex);
     std::string line = "[" + level + "] " + msg + '\n';
-    if (logToConsole) std::cout << line;
+    // if (logToConsole) std::cout << line;
     if (logFile.is_open()) logFile << line;
 }
 

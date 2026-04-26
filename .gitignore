@@ -1,4 +1,5 @@
 *.log
+*.txt
 *.exe
 *.json
 .vscode/*

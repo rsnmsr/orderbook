@@ -50,6 +50,10 @@ class OrderBook{
     
     void cancelOrder(const std::string& order_id);
     std::vector<TradingEvent> processEvent(Event event);
+    void printSnapshot() const;
+    const auto& getBids() const { return bids; }
+    const auto& getAsks() const { return asks; }
+    const auto& getOrderMap() const { return order_map; }
 
 };
 #endif
