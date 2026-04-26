@@ -1,5 +1,6 @@
 #include <algorithm>
 #include "orderbook.hpp"
+#include "../debug/Logger.hpp"
 
 OrderBook::OrderBook() {};
 
@@ -29,6 +30,7 @@ std::vector<TradingEvent> OrderBook::processEvent(Event event)
     }
 
     }
+    
     return trades;
 }
 
